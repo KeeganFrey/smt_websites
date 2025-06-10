@@ -1,0 +1,13 @@
+{
+  "name": "testing-javascript",
+  "version": "1.0.0",
+  "description": "A JavaScript testing utility for running test cases.",
+  "main": "tester.js",
+  "scripts": {
+    "test": "node tester.js"
+  },
+  "dependencies": {
+    "diff": "^5.0.0"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,31 @@
+To use the JavaScript testing tool, run the following command in your terminal from the root directory of the repository:
+
+node testing_javascript/tester.js <your_script_name.js> <your_function_name> <your_test_directory>
+
+- `<your_script_name.js>`: The path to the JavaScript file containing the solution (e.g., testing_javascript/sorting_solution.js).
+- `<your_function_name>`: The name of the exported function to test within your script (e.g., bubble_sort).
+- `<your_test_directory>`: The path to the directory containing the test case files (e.g., testing_python/test_cases_sorting/).
+
+The .in and .out files in the test cases folder are used as follows:
+- `.in` files: Contain the parameters for your function. Each line is a separate parameter, parsed as JSON. If your function takes multiple arguments, they should be on separate lines. If your function takes a single argument (like an array), it should be on the first line.
+- `.out` files: Represent the expected output from your function. Each line corresponds to an expected return value, parsed as JSON. For functions returning a single value (like a sorted array), this will be on the first line.
+
+Each line in both .in and .out files is read as a JSON object and will be parsed accordingly.
+
+Example Usage:
+--------------------------------------------------------------------------------
+Testing `bubble_sort` in `testing_javascript/sorting_solution.js` with tests in `testing_python/test_cases_sorting/`:
+
+Run from the repository root:
+node testing_javascript/tester.js testing_javascript/sorting_solution.js bubble_sort testing_python/test_cases_sorting/
+
+Expected Output (summary part):
+========================================
+Test Summary
+========================================
+Passed: X
+Failed: Y
+Total:  Z
+========================================
+(Where X, Y, Z are the actual numbers based on test results)
+--------------------------------------------------------------------------------
