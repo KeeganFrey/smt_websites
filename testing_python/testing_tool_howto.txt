@@ -1,0 +1,31 @@
+Use the following command in your terminal. It's best to run this from the same directory where your script is located.
+python tester.py <your_script_name.py> <your_function_name> <your_test_directory>
+In the test cases folder, it is expected that there are pairs of .in and .out files
+.in files are the function parameters - each line being a parameter -  and will be fed into the function in line order
+.out files represent the expected output, and are parsed the same way as the input
+each line is read as JSON, and will be parsed as such
+Example usage:
+Test Script: my_solution.py
+# my_solution.py
+def add(a, b):
+  # Your function takes two arguments, which are Python dictionaries in this case
+  return a['x'] + b['x']
+
+tests/test1.in
+{"x": 5}
+{"x": 10}
+
+tests/test1.out
+15
+
+Run from Terminal:
+python tester.py my_solution.py add test_cases/ 
+
+Output(in terminal):
+========================================
+Test Summary
+========================================
+Passed: 1
+Failed: 0
+Total:  1
+========================================
