@@ -1,1 +1,36 @@
-Hello
+The diffrent kind of resturants are:
+fast food
+├── fast burgers - maybe multiple
+├── fast chicken - maybe multiple
+├── fast coffee
+└── fast mexican
+fast premium
+├── pasta
+├── mediteranian
+└── bowls - multiple
+BBQ - perhaps multiple
+Diner places
+Ice cream
+mexican
+farmers market
+pizza - perhaps multiple
+chineese
+indian 
+cafe - multiple
+bars
+sandwiches
+breakfest food
+
+Places people would go to buy stuff
+department stores
+groceries
+hobby stores
+apperal
+furniture
+home improvment
+automobiles
+farm stuff
+rereational equipment
+electronics
+repair shops
+knick nacks
