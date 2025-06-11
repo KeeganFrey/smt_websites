@@ -13,3 +13,4 @@ This folder contains reusable HTML templates for common website features.
 ## Available Templates
 
 - `pdf_viewer.html`: A template for embedding a PDF document into a webpage.
+- `filterable_grid/filterable_grid.html`: A template for creating a responsive grid of items that can be filtered by category. Supports text, links, and images.

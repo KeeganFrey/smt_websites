@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filterable Grid</title>
+    <style>
+        /* Basic Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Filter Controls Styling */
+        #filter-buttons {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .filter-button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .filter-button:hover, .filter-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Grid Container Styling */
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Grid Item Styling */
+        .grid-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 0; /* Replaced margin with gap on container */
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            display: flex; /* For aligning items if needed, and managing content flow */
+            flex-direction: column;
+        }
+
+        .grid-item img {
+            max-width: 100%;
+            height: auto;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .grid-item h3 {
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #0056b3;
+        }
+
+        .grid-item h3 a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .grid-item h3 a:hover {
+            text-decoration: underline;
+        }
+
+        .grid-item p {
+            font-size: 0.9em;
+            line-height: 1.6;
+            flex-grow: 1; /* Allows description to take available space */
+            margin-bottom: 0;
+        }
+
+        /* Hidden Item Style */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design Adjustments */
+        @media (max-width: 600px) {
+            #grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .filter-button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="filter-buttons">
+        <button class="filter-button active" data-filter="all">All</button>
+        <button class="filter-button" data-filter="tech">Technology</button>
+        <button class="filter-button" data-filter="nature">Nature</button>
+        <button class="filter-button" data-filter="food">Food</button>
+    </div>
+
+    <div id="grid-container">
+        <div class="grid-item" data-category="tech">
+            <img src="https://via.placeholder.com/200x150.png?text=Tech+Item" alt="Tech Item">
+            <h3><a href="#">AI Breakthrough</a></h3>
+            <p>A new development in AI research.</p>
+        </div>
+        <div class="grid-item" data-category="nature">
+            <img src="https://via.placeholder.com/200x150.png?text=Nature+Scene" alt="Nature Scene">
+            <h3><a href="#">Mountain View</a></h3>
+            <p>A beautiful vista of a mountain range.</p>
+        </div>
+        <div class="grid-item" data-category="tech">
+            <h3><a href="#">New Programming Language</a></h3>
+            <p>Introducing 'ScriptFast', a novel language.</p>
+        </div>
+        <div class="grid-item" data-category="food">
+            <img src="https://via.placeholder.com/200x150.png?text=Delicious+Dish" alt="Delicious Dish">
+            <h3><a href="#">Gourmet Pizza</a></h3>
+            <p>A recipe for a delicious homemade pizza.</p>
+        </div>
+        <div class="grid-item" data-category="nature">
+            <h3><a href="#">Forest Trail Guide</a></h3>
+            <p>Discover hidden trails in the local forest.</p>
+        </div>
+        <div class="grid-item" data-category="food">
+            <h3><a href="#">Healthy Smoothie</a></h3>
+            <p>A quick and easy recipe for a morning smoothie.</p>
+        </div>
+    </div>
+
+    <!-- Template for a grid item (REMOVED as actual items are now present) -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtonsContainer = document.getElementById('filter-buttons');
+            // Querying live grid items, not from template
+            const gridItems = document.querySelectorAll('#grid-container .grid-item');
+            const allGridItemsElements = Array.from(document.getElementById('grid-container').children)
+                                            .filter(el => el.classList.contains('grid-item'));
+
+
+            function filterItems(selectedCategory) {
+                allGridItemsElements.forEach(item => {
+                    const itemCategory = item.dataset.category;
+                    if (selectedCategory === 'all' || itemCategory === selectedCategory) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (filterButtonsContainer) {
+                filterButtonsContainer.addEventListener('click', function (event) {
+                    const target = event.target;
+                    // Check if the clicked element is a filter button
+                    if (target.classList.contains('filter-button')) {
+                        const filterValue = target.dataset.filter;
+
+                        // Update active state for buttons
+                        const currentActiveButton = filterButtonsContainer.querySelector('.filter-button.active');
+                        if (currentActiveButton) {
+                            currentActiveButton.classList.remove('active');
+                        }
+                        target.classList.add('active');
+
+                        filterItems(filterValue);
+                    }
+                });
+            }
+
+            // Initial state: Show all items
+            // This assumes items are initially visible (no 'hidden' class in HTML)
+            // If a default filter is desired, call filterItems here with that category
+            // and ensure the corresponding button has the 'active' class.
+            // For now, we ensure all are visible by default if no 'hidden' class is applied in markup.
+            // To be safe, explicitly show all if that's the default desired state:
+            filterItems('all');
+
+            // If there's an "all" button, make it active by default
+            const allButton = filterButtonsContainer.querySelector('.filter-button[data-filter="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
