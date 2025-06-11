@@ -3,10 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Viewer</title>
+    <title>Interactive Menu Bar</title> <!-- Page title -->
+    <style>
+        /* Basic body styling */
+        body {
+            margin: 0; /* Remove default body margin for consistency */
+            font-family: Arial, sans-serif; /* Standard font */
+        }
+
+        /* Main container for the entire menu bar */
+        .menu-bar-container {
+            background-color: #333; /* Dark background color */
+            padding: 0 20px; /* Horizontal padding */
+            height: 60px; /* Fixed height */
+            position: fixed; /* Sticks to the top of the viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000; /* Ensures it stays on top of other page content */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            display: flex; /* Enables flexbox layout */
+            justify-content: space-between; /* Puts space between logo/empty div and button */
+            align-items: center; /* Vertically aligns items in the center */
+        }
+
+        /* Toggle button for the dropdown menu */
+        .menu-button {
+            background-color: #4CAF50; /* Green background color */
+            color: white; /* White text color */
+            padding: 10px 15px; /* Padding for size and tappability */
+            border: none; /* No border */
+            cursor: pointer; /* Changes cursor to pointer on hover */
+            font-size: 16px; /* Text size */
+            border-radius: 5px; /* Rounded corners */
+            -webkit-tap-highlight-color: transparent; /* Removes tap highlight on some mobile browsers */
+        }
+
+        /* Hover effect for the menu button */
+        .menu-button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        /* Container for the dropdown menu items */
+        .menu-items {
+            list-style-type: none; /* Removes default list bullets */
+            margin: 0; /* Resets default margin */
+            padding: 0; /* Resets default padding */
+            background-color: #f9f9f9; /* Light background for the dropdown */
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Adds a shadow for depth */
+            position: absolute; /* Positioned relative to the nearest positioned ancestor (or body) */
+            top: 60px; /* Aligns below the 60px fixed-height menu bar */
+            right: 20px; /* Aligns to the right of the screen (desktop default) */
+            min-width: 180px; /* Minimum width for the dropdown on larger screens */
+            z-index: 1001; /* Ensures dropdown is above the menu bar itself if overlapping */
+            border-radius: 5px; /* Rounded corners for the dropdown box */
+
+            /* Initial state for animations: hidden and prepared for transition */
+            opacity: 0; /* Starts fully transparent */
+            visibility: hidden; /* Starts hidden from view and inaccessible */
+            transform: translateX(0); /* Default transform state (no translation) */
+            /* Smooth transition for opacity, visibility, and transform properties */
+            /* visibility transition: ensures element is not interactive during fade out and only visible when fade in complete. */
+            transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s, transform 0.3s ease-in-out;
+        }
+
+        /* State when the menu is open ('.open' class is added via JavaScript) */
+        .menu-items.open {
+            opacity: 1; /* Makes the menu fully opaque */
+            visibility: visible; /* Makes the menu visible and interactive */
+            transform: translateX(0); /* Ensures it's in its final position if animating transform */
+            transition-delay: 0s, 0s, 0s; /* Apply visibility change immediately when opening */
+        }
+
+        /*
+        --- Animation Configuration ---
+
+        The dropdown menu uses CSS transitions for animations. You can choose between:
+        1. Fade-in Animation (Default behavior if no specific animation class is added):
+           - How it works: The menu appears by changing opacity. `transform: translateX(0)` ensures it fades in its defined position.
+           - To use: Ensure the `ul` element with class `menu-items` does NOT have the `animate-slide-in-left` class.
+             Example: <ul class="menu-items" id="menuItems"> ... </ul>
+
+        2. Slide-in from Left Animation:
+           - How it works: The menu slides in from the left side of its container while fading in.
+           - To use: Add the `animate-slide-in-left` class to the `ul` element with class `menu-items`.
+             Example: <ul class="menu-items animate-slide-in-left" id="menuItems"> ... </ul>
+             (This is the current default in the HTML structure below)
+        */
+
+        /* Styles for the 'Slide-in from Left' animation */
+        /* This class defines the starting state of the menu when it's closed (or closing) and configured for slide-in. */
+        .menu-items.animate-slide-in-left {
+            transform: translateX(-100%); /* Moves the menu completely off-screen to the left relative to its own width */
+            opacity: 0; /* Ensures it's transparent before sliding in */
+        }
+
+        /* This rule defines the target state for the slide-in animation when the menu is open. */
+        /* The transition defined in '.menu-items' will animate from the initial state (above) to this target state. */
+        .menu-items.open.animate-slide-in-left {
+            transform: translateX(0); /* Slides menu to its intended spot (0px offset) */
+            opacity: 1; /* Fades the menu in to full opacity */
+            visibility: visible; /* Makes it visible */
+        }
+        /* Note: The default .menu-items.open rule also sets transform: translateX(0) and opacity: 1.
+           This ensures that if 'animate-slide-in-left' is NOT present, the menu still correctly
+           fades in at its final position due to the base transition on '.menu-items'.
+        */
+
+
+        /* Styling for individual menu items (links within list items) */
+        .menu-items li a {
+            display: block; /* Makes the entire area of the <li> clickable */
+            padding: 14px 20px; /* Generous padding for easy clicking/tapping */
+            text-decoration: none; /* Removes underline from links */
+            color: #333; /* Dark text color for readability */
+            border-bottom: 1px solid #eee; /* Adds a light separator line between items */
+        }
+        /* Removes border from the last menu item for a cleaner look */
+        .menu-items li:last-child a {
+            border-bottom: none;
+        }
+
+        /* Hover effect for menu items */
+        .menu-items li a:hover {
+            background-color: #ddd; /* Light grey background on hover */
+        }
+
+        /* --- Responsive Adjustments --- */
+
+        /* For tablets and larger phones (up to 768px wide) */
+        @media screen and (max-width: 768px) {
+            .menu-items {
+                min-width: 220px; /* Makes dropdown slightly wider on tablets */
+                right: 15px; /* Adjusts right position for tablet view */
+            }
+            /* Responsive slide-in for tablets:
+               Ensures the menu (if using animate-slide-in-left) slides its own width.
+               A value of -100vw (viewport width) previously used here might be too much for a typical dropdown,
+               making it appear from very far off-screen. translateX(-100%) is relative to the element's own width.
+            */
+             .menu-items.animate-slide-in-left {
+                transform: translateX(-100%); /* Slides its own width from left. Corrected from -100vw. */
+            }
+        }
+
+        /* For smaller mobile phones (up to 600px wide) */
+        @media screen and (max-width: 600px) {
+            .menu-bar-container {
+                height: 50px; /* Reduces menu bar height on small screens */
+                padding: 0 10px; /* Adjusts horizontal padding for the menu bar */
+            }
+            .menu-button {
+                font-size: 14px; /* Smaller font size for the button */
+                padding: 8px 12px; /* Smaller padding for the button */
+            }
+            /* Dropdown menu adjustments for small screens */
+            .menu-items {
+                top: 50px; /* Aligns dropdown below the 50px menu bar */
+                left: 0; /* Makes dropdown span full width */
+                right: 0; /* Makes dropdown span full width */
+                width: 100%; /* Explicitly set to full width */
+                min-width: 0; /* Resets min-width, as it's now full-width */
+                border-radius: 0 0 5px 5px; /* Adjusts border radius for full-width appearance at bottom corners */
+                box-shadow: 0px 4px 8px rgba(0,0,0,0.15); /* Slightly softer shadow for full-width menu */
+            }
+            /* Slide-in for full-width mobile menu:
+               Still slides its own width from the left. Since the menu is 100% width of the viewport,
+               it will appear to slide from the edge of the screen.
+            */
+            .menu-items.animate-slide-in-left {
+                 transform: translateX(-100%);
+            }
+            /* Target state for slide-in on mobile is already covered by the general
+               '.menu-items.open.animate-slide-in-left' rule, so no specific override needed here.
+            */
+            /* .menu-items.open.animate-slide-in-left { transform: translateX(0); } */
+
+            /* Adjust padding for menu items on small screens for consistent tappability */
+            .menu-items li a {
+                padding: 15px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>PDF Viewer</h1>
-    <iframe src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" style="width: 100%; height: 600px;"></iframe>
+    <!-- Main Menu Bar Container -->
+    <!-- The 'id="menuBar"' is used by JavaScript to prevent closing the menu when clicking inside the bar. -->
+    <div class="menu-bar-container" id="menuBar">
+        <!-- Left side of the menu bar: Can be used for a logo, branding, or navigation links -->
+        <div><!-- Optional: <img src="logo.png" alt="Logo"> or <a href="/">Home</a> --></div>
+
+        <!-- Menu Toggle Button: This button triggers the display of the dropdown menu. -->
+        <!-- 'id="menuToggleBtn"' is used by JavaScript to attach the click event listener. -->
+        <button class="menu-button" id="menuToggleBtn">Menu</button>
+
+        <!-- Dropdown Menu List -->
+        <!-- 'id="menuItems"' is used by JavaScript to toggle visibility and animation classes. -->
+        <!-- Animation Control:
+             - Default: Fade-in. To use, ensure only the 'menu-items' class is present.
+               Example: <ul class="menu-items" id="menuItems">
+             - Slide-in from Left: Add 'animate-slide-in-left' class (this is the current default in the HTML).
+               Example: <ul class="menu-items animate-slide-in-left" id="menuItems">
+        -->
+        <ul class="menu-items animate-slide-in-left" id="menuItems">
+            <li><a href="#">Item 1</a></li>
+            <li><a href="#">Item 2</a></li>
+            <li><a href="#">Item 3</a></li>
+            <li><a href="#">Another Item</a></li>
+        </ul>
+    </div>
+
+    <!-- Dummy content below the menu bar to demonstrate scrolling and fixed positioning of the menu bar. -->
+    <!-- The 'padding-top' on this div should be greater than the menu bar's height to prevent content from being hidden underneath. -->
+    <div style="padding-top: 70px; /* Adjust if menu bar height changes */ height: 1000px; background-color: #f0f0f0; padding: 20px;">
+        <h1>Page Content</h1>
+        <p>This is some dummy content to demonstrate that the menu bar remains fixed at the top when you scroll.</p>
+        <p>The menu animation can be changed by modifying the class on the `ul` element with id `menuItems` in the HTML, as described in the CSS comments and above the `ul` element.</p>
+    </div>
+
+    <script>
+        // Get references to the necessary DOM elements
+        const menuToggleBtn = document.getElementById('menuToggleBtn'); // The button that toggles the menu
+        const menuItems = document.getElementById('menuItems');     // The <ul> element containing menu items
+        const menuBar = document.getElementById('menuBar');         // The main container of the menu bar
+
+        // Event listener for the menu toggle button click
+        menuToggleBtn.addEventListener('click', function(event) {
+            // Toggle the 'open' class on the menu items container.
+            // CSS rules associated with '.open' will then show/hide and animate the menu.
+            menuItems.classList.toggle('open');
+
+            // Prevent the click event from bubbling up to the window.
+            // This is important if you have a window click listener to close the menu,
+            // as it stops the menu from immediately closing after being opened by a button click.
+            event.stopPropagation();
+        });
+
+        // Optional: Event listener for clicks anywhere on the window.
+        // This is used to close the dropdown menu if the user clicks outside of it.
+        window.addEventListener('click', function(event) {
+            // Check if the menu items container currently has the 'open' class (i.e., is visible)
+            // AND if the click target (event.target) is NOT within the menuBar container.
+            if (menuItems.classList.contains('open') && !menuBar.contains(event.target)) {
+                // If both conditions are true, remove the 'open' class to hide and animate out the menu.
+                menuItems.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>
