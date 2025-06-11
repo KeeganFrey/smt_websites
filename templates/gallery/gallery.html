@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+    <style>
+        /* Additional styles for demo buttons */
+        .gallery-controls {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .gallery-controls button {
+            margin: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .gallery-controls button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container visible-3"> <!-- Default to visible-3 for demo -->
+        <div class="gallery-items">
+            <!-- Placeholder gallery items -->
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+1" alt="Image 1">
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+2" alt="Image 2">
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+3" alt="Image 3">
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+4" alt="Image 4">
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+5" alt="Image 5">
+            </div>
+            <div class="gallery-item">
+                <img src="https://via.placeholder.com/600x350?text=Image+6" alt="Image 6">
+            </div>
+        </div>
+        <div class="navigation-indicators">
+            <!-- Navigation indicators will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <div class="gallery-controls">
+        <h4>Gallery Controls</h4>
+        <div>
+            <strong>Indicator Position:</strong>
+            <button onclick="setIndicatorPosition('bottom')">Bottom</button>
+            <button onclick="setIndicatorPosition('left')">Left</button>
+            <button onclick="setIndicatorPosition('right')">Right</button>
+        </div>
+        <div>
+            <strong>Visible Items:</strong>
+            <button onclick="setVisibleItems(1)">1 (Main Only)</button>
+            <button onclick="setVisibleItems(3)">3 (Main + 1 Faded Pair)</button>
+            <button onclick="setVisibleItems(5)">5 (Main + 2 Faded Pairs)</button>
+        </div>
+        <div>
+            <button onclick="prevItem()">Previous</button>
+            <button onclick="nextItem()">Next</button>
+        </div>
+         <div>
+            <button onclick="refreshGallery()">Refresh Gallery (e.g. if items changed)</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+</body>
+</html>

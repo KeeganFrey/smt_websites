@@ -1,0 +1,185 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px; /* Added padding for better spacing on small screens */
+    box-sizing: border-box; /* Ensure padding doesn't expand body beyond viewport */
+}
+
+.gallery-container {
+    position: relative;
+    width: 80%;
+    max-width: 600px; /* Adjusted max-width for a vertical layout */
+    /* overflow: hidden; */ /* Overflow hidden can hide faded items, manage carefully */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Default to vertical gallery */
+    align-items: center; /* Center items horizontally */
+    padding: 10px;
+    background-color: #fff; /* Added background to container */
+}
+
+/* Default to vertical gallery */
+.gallery-items {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    width: 100%;
+    transition: transform 0.5s ease-in-out; /* For potential future sliding effects */
+}
+
+.gallery-item {
+    width: 80%; /* Width of the main item */
+    margin: 10px 0;
+    box-sizing: border-box;
+    opacity: 0.4; /* Default opacity for non-active items */
+    transform: scale(0.8); /* Default scale for non-active items */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    border-radius: 8px; /* Rounded corners for items */
+    overflow: hidden; /* Ensure images don't overflow rounded corners */
+}
+
+.gallery-item.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 10;
+}
+
+/* Faded items before and after the main visible item(s) */
+.gallery-item.prev-1,
+.gallery-item.next-1 {
+    opacity: 0.6;
+    transform: scale(0.9);
+    z-index: 5;
+}
+
+.gallery-item.prev-2,
+.gallery-item.next-2 {
+    opacity: 0.3;
+    transform: scale(0.8);
+    z-index: 1;
+}
+
+
+.gallery-item img {
+    width: 100%;
+    display: block;
+    border-radius: 8px; /* Match item border radius */
+}
+
+.navigation-indicators {
+    display: flex; /* Use flex for horizontal layout of indicators */
+    justify-content: center; /* Center indicators */
+    align-items: center;
+    margin-top: 15px; /* Space above indicators */
+    padding: 5px;
+    position: static; /* Default position */
+    bottom: auto;
+    left: auto;
+    transform: none;
+}
+
+.gallery-container.indicators-left .navigation-indicators {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column; /* Stack indicators vertically */
+    margin-top: 0;
+}
+.gallery-container.indicators-left .indicator {
+    margin: 5px 0; /* Adjust margin for vertical layout */
+}
+
+.gallery-container.indicators-right .navigation-indicators {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column; /* Stack indicators vertically */
+    margin-top: 0;
+}
+.gallery-container.indicators-right .indicator {
+    margin: 5px 0; /* Adjust margin for vertical layout */
+}
+
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #bbb;
+    margin: 0 5px; /* Horizontal margin by default */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+    background-color: #717171;
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .gallery-container {
+        width: 90%;
+    }
+
+    .gallery-item {
+        width: 90%; /* Adjust item width for smaller screens */
+    }
+
+    .gallery-container.indicators-left .navigation-indicators,
+    .gallery-container.indicators-right .navigation-indicators {
+        position: static; /* Revert to static for small screens */
+        transform: none;
+        flex-direction: row; /* Horizontal indicators on small screens */
+        margin-top: 10px;
+    }
+    .gallery-container.indicators-left .indicator,
+    .gallery-container.indicators-right .indicator {
+        margin: 0 5px; /* Adjust margin for horizontal layout */
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-container {
+        width: 95%;
+        padding: 5px;
+    }
+
+    .gallery-item {
+        width: 100%; /* Full width for very small screens */
+        margin: 5px 0;
+    }
+
+    .indicator {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+    }
+}
+
+/* Classes for controlling visible items (primarily for JS logic, CSS provides base) */
+/* The actual fading/visibility logic will be more JS driven for a vertical stack */
+/* Basic idea: if .visible-1, only one item is .active, others are default.
+   If .visible-3, one .active, two .prev-1/.next-1, others default.
+   If .visible-5, one .active, two .prev-1/.next-1, two .prev-2/.next-2, others default.
+*/
+
+/*
+  Note: The horizontal gallery styling (translateX) from the previous CSS version
+  has been removed in favor of a vertical stacking layout.
+  If horizontal sliding is needed, the .gallery-items display and item min-width
+  would need to be adjusted, and JS would handle transform: translateX.
+  For this task, focusing on vertical stack as primary.
+*/
+
+/* Helper class for explicitly vertical gallery (though it's default now) */
+.gallery-vertical .gallery-items {
+    flex-direction: column;
+}
