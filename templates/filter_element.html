@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Element</title>
+    <style>
+        /* --- Filter Element Documentation ---
+         *
+         * ** GENERAL USAGE **
+         * 1. Copy the entire <div class="filter-container">...</div>
+         *    HTML snippet into your target webpage's HTML.
+         * 2. Copy the entire <style>...</style> block from this file's <head>
+         *    into your project's CSS file or the <head> of your HTML page.
+         * 3. Optionally, copy the <script>...</script> block for expand/collapse
+         *    functionality if needed, placing it before your closing </body> tag.
+         *
+         * ** CUSTOMIZATION GUIDE **
+         *
+         * --- SIZING THE ELEMENT ---
+         * - The `.filter-container` width is set to `max-width: 300px` by default.
+         *   You can change this to a fixed width (e.g., `width: 250px;`),
+         *   a percentage (e.g., `width: 100%; max-width: 400px;` to fill a parent),
+         *   or remove `max-width` to let it be sized by its parent container.
+         * - The `max-height` (e.g., `max-height: 400px;`) on `.filter-container`
+         *   determines when scrolling will appear. Adjust as needed.
+         *   If you don't want a fixed height and scrolling, remove `max-height`
+         *   and `overflow-y: auto;`.
+         *
+         * --- COLORS & APPEARANCE ---
+         * - `.filter-container`:
+         *   - `background-color`: Background of the filter box.
+         *   - `border`: Border around the filter box.
+         *   - `border-radius`: Rounded corners for the filter box.
+         * - `.filter-title`:
+         *   - `color`: Text color of the main title.
+         *   - `background-color`: Background of the title area.
+         *   - `border-bottom`: Border below the title.
+         * - `.category-title`:
+         *   - `color`: Text color of category titles.
+         *   - `background-color`: Background of category titles.
+         *   - The arrow color is set by `border-color` on the `.arrow` span.
+         * - `.filter-options a`:
+         *   - `color`: Text color of filter links.
+         *   - `:hover color`: Text color of filter links on hover.
+         *   - `:hover background-color`: Background of filter links on hover.
+         *
+         * --- EXPAND/COLLAPSE FUNCTIONALITY ---
+         * - The `.arrow` element provides a visual cue. Its appearance is
+         *   controlled by CSS.
+         * - The `.filter-options` are initially hidden (`display: none;`).
+         *   The JavaScript toggles to `display: block;` when a category
+         *   is expanded.
+         *
+         * --- ADDING/MODIFYING CONTENT ---
+         * - To add a new filter category:
+         *   Copy an existing `<li class="filter-category">...</li>` block.
+         *   Change the `.category-title` text.
+         *   Update the links within its `.filter-options` list.
+         * - To add/remove filter options:
+         *   Modify the `<li><a href="...">...</a></li>` items within
+         *   the desired category's `.filter-options` list.
+         *   Ensure the `href` attribute points to the correct page section
+         *   (e.g., `#sectionName`).
+         */
+
+        body { /* Example body style, not part of the component */
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .filter-container {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px; /* Designer can adjust this */
+            /* Example of height constraint, can be removed or adjusted */
+            max-height: 400px;
+            overflow-y: auto; /* Enables scrolling if content exceeds max-height */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .filter-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-categories {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .filter-category {
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            font-size: 1em;
+            font-weight: bold;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex; /* To align title and arrow */
+            justify-content: space-between; /* Puts space between title and arrow */
+            align-items: center; /* Vertically aligns title and arrow */
+            border: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+
+        .category-title:hover {
+            background-color: #f0f0f0;
+        }
+
+        .category-title .arrow {
+            border: solid #555;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg); /* Pointing down */
+            transition: transform 0.3s ease;
+        }
+
+        .category-title.expanded .arrow {
+            transform: rotate(-135deg); /* Pointing up */
+        }
+
+        .filter-options {
+            list-style: none;
+            padding-left: 15px; /* Indent options under category */
+            margin-top: 5px;
+            display: none; /* Initially hidden */
+            border-left: 2px solid #eee; /* Visual cue for grouping */
+            animation: fadeIn 0.3s ease-in-out; /* Basic fade-in animation */
+        }
+
+        .filter-options.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .filter-options li a {
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .filter-options li a:hover {
+            color: #0056b3;
+            background-color: #e9ecef; /* Slight background on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="filter-container">
+        <h3 class="filter-title">Filter Results</h3>
+        <ul class="filter-categories">
+            <li class="filter-category">
+                <h4 class="category-title">Fruit <span class="arrow"></span></h4>
+                <ul class="filter-options">
+                    <li><a href="#apple">Apple</a></li>
+                    <li><a href="#banana">Banana</a></li>
+                    <li><a href="#pear">Pear</a></li>
+                    <li><a href="#orange">Orange</a></li>
+                    <li><a href="#blueberry">Blueberry</a></li>
+                    <li><a href="#peach">Peach</a></li>
+                </ul>
+            </li>
+            <!-- Example of another category (initially commented out) -->
+            <!--
+            <li class="filter-category">
+                <h4 class="category-title">Vegetables <span class="arrow"></span></h4>
+                <ul class="filter-options">
+                    <li><a href="#carrot">Carrot</a></li>
+                    <li><a href="#broccoli">Broccoli</a></li>
+                    <li><a href="#spinach">Spinach</a></li>
+                </ul>
+            </li>
+            -->
+        </ul>
+    </div>
+
+    <script>
+        /* --- JavaScript for Filter Element ---
+         *
+         * This script enables the expand/collapse functionality for filter categories.
+         *
+         * How it works:
+         * - It finds all elements with the class `category-title`.
+         * - For each category title, it adds a click event listener.
+         * - When a category title is clicked:
+         *   - It toggles the `expanded` class on the title itself (for arrow styling).
+         *   - It finds the next sibling element, which should be the `filter-options` list.
+         *   - It toggles the `visible` class on the `filter-options` list, which changes
+         *     its display from `none` to `block` (or vice-versa) via CSS.
+         *
+         * To use this script:
+         * - Ensure this <script> block is placed preferably at the end of your <body>,
+         *   or ensure it runs after the DOM is fully loaded if placed in the <head>.
+         * - The HTML structure must match the one provided in this template:
+         *   - Category titles must have the class `category-title`.
+         *   - The list of filter options must be the immediate next sibling of the
+         *     `category-title` and have the class `filter-options`.
+         *   - The arrow indicator inside the `category-title` should have the class `arrow`.
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryTitles = document.querySelectorAll('.category-title');
+
+            categoryTitles.forEach(title => {
+                title.addEventListener('click', function() {
+                    // Toggle expanded class on the title for arrow styling
+                    this.classList.toggle('expanded');
+
+                    // Get the next element sibling, which should be the filter-options list
+                    const optionsList = this.nextElementSibling;
+
+                    if (optionsList && optionsList.classList.contains('filter-options')) {
+                        // Toggle visibility of the options list
+                        optionsList.classList.toggle('visible');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

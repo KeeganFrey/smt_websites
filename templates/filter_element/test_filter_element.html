@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Filter Element</title>
+    <style>
+        /* Copied from filter_element.html - For standalone testing */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex; /* Use flexbox to position filter and content */
+            gap: 20px; /* Space between filter and content */
+        }
+
+        .filter-container {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-shrink: 0; /* Prevent filter from shrinking */
+        }
+
+        .filter-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-categories {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .filter-category {
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            font-size: 1em;
+            font-weight: bold;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+
+        .category-title:hover {
+            background-color: #f0f0f0;
+        }
+
+        .category-title .arrow {
+            border: solid #555;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+
+        .category-title.expanded .arrow {
+            transform: rotate(-135deg);
+        }
+
+        .filter-options {
+            list-style: none;
+            padding-left: 15px;
+            margin-top: 5px;
+            display: none;
+            border-left: 2px solid #eee;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .filter-options.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .filter-options li a {
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .filter-options li a:hover {
+            color: #0056b3;
+            background-color: #e9ecef;
+        }
+
+        /* Styles for dummy content */
+        .page-content {
+            flex-grow: 1; /* Allow content to take remaining space */
+        }
+        .page-content section {
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .page-content h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Filter Element Copied Here -->
+    <div class="filter-container" id="myFilterElement">
+        <h3 class="filter-title">Filter Page Sections</h3>
+        <ul class="filter-categories">
+            <li class="filter-category">
+                <h4 class="category-title">Fruit <span class="arrow"></span></h4>
+                <ul class="filter-options">
+                    <li><a href="#apple">Apple</a></li>
+                    <li><a href="#banana">Banana</a></li>
+                    <li><a href="#pear">Pear</a></li>
+                    <li><a href="#orange">Orange</a></li>
+                    <li><a href="#blueberry">Blueberry</a></li>
+                    <li><a href="#peach">Peach</a></li>
+                </ul>
+            </li>
+            <li class="filter-category">
+                <h4 class="category-title">Vegetables <span class="arrow"></span></h4>
+                <ul class="filter-options">
+                    <li><a href="#carrot">Carrot</a></li>
+                    <li><a href="#broccoli">Broccoli</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Dummy Page Content -->
+    <div class="page-content">
+        <h1>Page Content</h1>
+        <p>Click on the filter links to navigate to different sections.</p>
+
+        <section id="apple"><h2>Apple Section</h2><p>Content about apples...</p></section>
+        <section id="banana"><h2>Banana Section</h2><p>Content about bananas...</p></section>
+        <section id="pear"><h2>Pear Section</h2><p>Content about pears...</p></section>
+        <section id="orange"><h2>Orange Section</h2><p>Content about oranges...</p></section>
+        <section id="blueberry"><h2>Blueberry Section</h2><p>Content about blueberries...</p></section>
+        <section id="peach"><h2>Peach Section</h2><p>Content about peaches...</p></section>
+        <section id="carrot"><h2>Carrot Section</h2><p>Content about carrots...</p></section>
+        <section id="broccoli"><h2>Broccoli Section</h2><p>Content about broccoli...</p></section>
+    </div>
+
+    <script>
+        // Copied from filter_element.html - For standalone testing
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterElement = document.getElementById('myFilterElement'); // Target specific filter instance
+            if (filterElement) {
+                const categoryTitles = filterElement.querySelectorAll('.category-title');
+
+                categoryTitles.forEach(title => {
+                    title.addEventListener('click', function() {
+                        this.classList.toggle('expanded');
+                        const optionsList = this.nextElementSibling;
+                        if (optionsList && optionsList.classList.contains('filter-options')) {
+                            optionsList.classList.toggle('visible');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <!-- Link to external test script -->
+    <script src="test_filter_element.js"></script>
+</body>
+</html>
