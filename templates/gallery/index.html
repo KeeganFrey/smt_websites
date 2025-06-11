@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        /* Basic body styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Gallery Container */
+        .gallery-container {
+            width: 90%; /* Adjust width as needed */
+            max-width: 1200px; /* Maximum width of the gallery */
+            margin: 20px auto; /* Centering the gallery */
+            overflow: hidden; /* Hides parts of items that are outside the container */
+            position: relative; /* For positioning arrows later if needed */
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Gallery Items List */
+        .gallery-items {
+            list-style: none; /* Removes default list styling */
+            padding: 0;
+            margin: 0;
+            display: flex; /* Enables Flexbox for horizontal layout */
+            transition: transform 0.5s ease-in-out; /* Smooth transition for sliding */
+        }
+
+        /* Individual Gallery Item */
+        .gallery-items li {
+            min-width: calc(100% / 3); /* Default for 3 items, will be adjusted by JS */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            text-align: center; /* Centers content within the item */
+            padding: 20px;
+            border-right: 1px solid #eee; /* Visual separator */
+            opacity: 0.5; /* Initially faded */
+            transform: scale(0.8); /* Initially scaled down */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smooth transition for focus effect */
+            background-color: #fafafa;
+            display: flex; /* For centering content vertically and horizontally */
+            align-items: center;
+            justify-content: center;
+            min-height: 200px; /* Example height */
+        }
+
+        .gallery-items li:last-child {
+            border-right: none; /* No border for the last item */
+        }
+
+        /* Style for the central (active) gallery item(s) */
+        .gallery-items li.active {
+            opacity: 1; /* Fully visible */
+            transform: scale(1); /* Normal size */
+            background-color: #fff;
+        }
+
+        /* Style for adjacent items (partially visible) */
+        .gallery-items li.adjacent {
+            opacity: 0.7;
+            transform: scale(0.9);
+        }
+
+        /* Indicator Container */
+        .indicator-container {
+            text-align: center; /* Centers the indicator circles */
+            margin-top: 20px; /* Space above the indicators (default) */
+            margin-bottom: 20px; /* Space below the indicators (if placed above) */
+        }
+
+        /* Indicator Circles */
+        .indicator-circle {
+            height: 12px;
+            width: 12px;
+            background-color: #bbb; /* Default color for inactive circles */
+            border-radius: 50%; /* Makes it a circle */
+            display: inline-block; /* Allows circles to sit next to each other */
+            margin: 0 5px; /* Spacing between circles */
+            cursor: pointer; /* Indicates clickable items */
+            transition: background-color 0.3s ease; /* Smooth color transition */
+        }
+
+        /* Active Indicator Circle */
+        .indicator-circle.active {
+            background-color: #717171; /* Color for the active circle */
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Gallery</h1>
+
+    <!-- The order of gallery-container and indicator-container can be changed by JS -->
+    <div id="gallery-wrapper">
+        <div class="gallery-container">
+            <ul class="gallery-items">
+                <!-- Items will be populated by JavaScript -->
+            </ul>
+        </div>
+        <div class="indicator-container">
+            <!-- Indicator circles will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const galleryConfig = {
+            itemsToShow: 3, // Can be 1, 3, or 5
+            indicatorPosition: 'below', // 'above' or 'below'
+            cycleSpeed: 3000, // Milliseconds for automatic cycling
+            autoCycle: true, // Enable or disable automatic cycling
+            // Sample items (replace with your actual image data or content)
+            itemsData: [
+                { id: 1, content: "Item 1" },
+                { id: 2, content: "Item 2" },
+                { id: 3, content: "Item 3" },
+                { id: 4, content: "Item 4" },
+                { id: 5, content: "Item 5" },
+                { id: 6, content: "Item 6" },
+                { id: 7, content: "Item 7" }
+            ]
+        };
+
+        // --- DOM Elements ---
+        const galleryWrapper = document.getElementById('gallery-wrapper');
+        const galleryContainer = galleryWrapper.querySelector('.gallery-container');
+        const galleryItemsList = galleryWrapper.querySelector('.gallery-items');
+        const indicatorContainer = galleryWrapper.querySelector('.indicator-container');
+
+        // --- State ---
+        let currentIndex = 0; // Index of the central item
+        let cycleIntervalId = null;
+
+        // --- Functions ---
+
+        /**
+         * Renders the gallery items and indicators.
+         */
+        function renderGallery() {
+            galleryItemsList.innerHTML = ''; // Clear existing items
+            indicatorContainer.innerHTML = ''; // Clear existing indicators
+
+            // Adjust indicator position based on config
+            if (galleryConfig.indicatorPosition === 'above') {
+                galleryWrapper.insertBefore(indicatorContainer, galleryContainer);
+                indicatorContainer.style.marginBottom = '20px';
+                indicatorContainer.style.marginTop = '0px';
+            } else { // Default 'below'
+                galleryWrapper.appendChild(indicatorContainer);
+                indicatorContainer.style.marginTop = '20px';
+                indicatorContainer.style.marginBottom = '0px';
+            }
+
+            // Adjust min-width of items based on itemsToShow
+            const itemWidthPercentage = 100 / galleryConfig.itemsToShow;
+            // galleryItemsList.style.minWidth = `calc(100% / ${galleryConfig.itemsToShow})`;
+
+
+            galleryConfig.itemsData.forEach((itemData, index) => {
+                // Create gallery item
+                const li = document.createElement('li');
+                li.textContent = itemData.content;
+                li.setAttribute('data-index', index);
+                // Set min-width for each item
+                li.style.minWidth = `${itemWidthPercentage}%`;
+                galleryItemsList.appendChild(li);
+
+                // Create indicator circle
+                const circle = document.createElement('div');
+                circle.classList.add('indicator-circle');
+                circle.setAttribute('data-index', index);
+                circle.addEventListener('click', () => {
+                    stopCycle();
+                    currentIndex = index;
+                    updateGalleryView();
+                    startCycle(); // Optionally restart cycle on manual interaction
+                });
+                indicatorContainer.appendChild(circle);
+            });
+
+            updateGalleryView();
+        }
+
+        /**
+         * Updates the display of gallery items (active, adjacent, transform) and indicators.
+         */
+        function updateGalleryView() {
+            const items = galleryItemsList.querySelectorAll('li');
+            const indicators = indicatorContainer.querySelectorAll('.indicator-circle');
+            const totalItems = items.length;
+
+            if (totalItems === 0) return;
+
+            // Ensure currentIndex is within bounds
+            currentIndex = (currentIndex % totalItems + totalItems) % totalItems;
+
+            items.forEach((item, index) => {
+                item.classList.remove('active', 'adjacent');
+                const itemIndex = parseInt(item.getAttribute('data-index'));
+
+                if (galleryConfig.itemsToShow === 1) {
+                    if (itemIndex === currentIndex) {
+                        item.classList.add('active');
+                    }
+                } else if (galleryConfig.itemsToShow === 3) {
+                    if (itemIndex === currentIndex) {
+                        item.classList.add('active');
+                    } else if (
+                        itemIndex === (currentIndex - 1 + totalItems) % totalItems ||
+                        itemIndex === (currentIndex + 1) % totalItems
+                    ) {
+                        item.classList.add('adjacent');
+                    }
+                } else if (galleryConfig.itemsToShow === 5) {
+                    if (itemIndex === currentIndex) {
+                        item.classList.add('active');
+                    } else if (
+                        itemIndex === (currentIndex - 1 + totalItems) % totalItems ||
+                        itemIndex === (currentIndex + 1) % totalItems
+                    ) {
+                        item.classList.add('adjacent');
+                    }
+                    // For 5 items, the ones 2 away could have a different, more subtle style if needed
+                    // For now, they just get the default faded/scaled style
+                }
+            });
+
+            // Update indicator states
+            indicators.forEach((circle, index) => {
+                circle.classList.toggle('active', index === currentIndex);
+            });
+
+            // Calculate the transformation needed to center the current item
+            const itemWidthPercent = 100 / galleryConfig.itemsToShow;
+            let offset = 0;
+
+            if (galleryConfig.itemsToShow === 1) {
+                // Center the single item
+                offset = currentIndex * itemWidthPercent;
+            } else if (galleryConfig.itemsToShow === 3) {
+                // The currentIndex item should be in the second slot (the middle one)
+                // We need to shift left by (currentIndex - 1) items' width
+                offset = (currentIndex * itemWidthPercent) - itemWidthPercent;
+
+            } else if (galleryConfig.itemsToShow === 5) {
+                // The currentIndex item should be in the third slot (the middle one)
+                // We need to shift left by (currentIndex - 2) items' width
+                offset = (currentIndex * itemWidthPercent) - (2 * itemWidthPercent);
+            }
+
+            // Ensure offset doesn't go too far left (e.g. when currentIndex is 0 or 1 for 3/5 item view)
+            // or too far right. This basic clamping helps for non-infinite-looping appearance.
+            const maxPossibleScrollItems = totalItems - galleryConfig.itemsToShow;
+            const maxOffset = maxPossibleScrollItems * itemWidthPercent;
+
+            offset = Math.max(0, Math.min(offset, maxOffset));
+
+            galleryItemsList.style.transform = `translateX(-${offset}%)`;
+        }
+
+        /**
+         * Moves to the next item in the gallery.
+         */
+        function cycleNext() {
+            currentIndex = (currentIndex + 1) % galleryConfig.itemsData.length;
+            updateGalleryView();
+        }
+
+        /**
+         * Starts the automatic cycling of the gallery.
+         */
+        function startCycle() {
+            if (galleryConfig.autoCycle && galleryConfig.itemsData.length > 1) {
+                stopCycle(); // Clear any existing interval
+                cycleIntervalId = setInterval(cycleNext, galleryConfig.cycleSpeed);
+            }
+        }
+
+        /**
+         * Stops the automatic cycling.
+         */
+        function stopCycle() {
+            clearInterval(cycleIntervalId);
+            cycleIntervalId = null;
+        }
+
+        // --- Initialization ---
+        function initializeGallery() {
+            if (!galleryWrapper || !galleryContainer || !galleryItemsList || !indicatorContainer) {
+                console.error("Gallery elements not found. Initialization failed.");
+                return;
+            }
+            renderGallery();
+            startCycle();
+
+            // Example: Add event listeners for hypothetical next/prev buttons
+            // document.getElementById('nextButton')?.addEventListener('click', () => {
+            //     stopCycle();
+            //     cycleNext();
+            //     startCycle();
+            // });
+            // document.getElementById('prevButton')?.addEventListener('click', () => {
+            //     stopCycle();
+            //     currentIndex = (currentIndex - 1 + galleryConfig.itemsData.length) % galleryConfig.itemsData.length;
+            //     updateGalleryView();
+            //     startCycle();
+            // });
+        }
+
+        // --- Start the gallery ---
+        document.addEventListener('DOMContentLoaded', initializeGallery);
+    </script>
+</body>
+</html>
