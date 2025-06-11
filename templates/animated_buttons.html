@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Animated Buttons</title>
+  <style>
+    /* --- Animated Buttons Documentation ---
+
+    ** GENERAL USAGE **
+
+    1. Find the HTML snippet for the desired button in the <body> of this file.
+    2. Copy the HTML snippet into your project.
+    3. Ensure the corresponding CSS classes (defined below) are included in your stylesheet.
+    4. For multiple buttons or to start fresh, you can copy this entire <style> block
+       into your project's CSS file or <head>.
+
+    ** CUSTOMIZATION GUIDE **
+
+    --- COLORS ---
+
+    - General Button (.button):
+      - `background-color`: Main background.
+      - `color`: Text color.
+      - `:hover background-color`: Background on hover.
+
+    - Emoji Buttons (.emoji-button, .circle-hover, .hexagon-hover):
+      - `border`: Border color of the button.
+      - `color`: Emoji color (initial).
+      - `.circle-hover::before background-color`: Background of the circle on hover.
+      - `.hexagon-hover::before background-color`: Background of the hexagon on hover.
+      - `:hover color`: Emoji color on hover (often white).
+
+    - Link Icon Button (.link-icon-button):
+      - `background-color`: Main background.
+      - `color`: Text color.
+      - `:hover background-color`: Background on hover.
+      - `.hover-icon color` (if set directly, otherwise inherits): Icon color.
+
+    - Pancake Button (.pancake-button):
+      - `.bar background-color`: Color of the pancake/X bars.
+      - `:hover background-color`: Background of the button itself on hover (translucent).
+
+    - Image & Text Button (.image-text-button):
+      - `background-color`: Main background.
+      - `border-color`: Border color.
+      - `color`: Default text color.
+      - `.button-text-content h4 color`: Title color.
+      - `.button-text-content p color`: Paragraph text color.
+      - `:hover box-shadow`: Can be adjusted for a different colored shadow if desired.
+
+    --- SIZES ---
+
+    - General:
+      - `padding` on most button classes controls the space around content.
+      - `font-size` on most button classes controls text/icon size.
+      - `margin` on button classes controls spacing between buttons.
+
+    - Emoji Buttons (.emoji-button):
+      - `font-size`: Controls the size of the emoji.
+      - `padding`: Controls the overall button size around the emoji.
+
+    - Link Icon Button (.link-icon-button):
+      - `padding`: Overall button size.
+      - `font-size`: Text size.
+      - `.hover-icon max-width` (on hover): Space allocated for the icon.
+
+    - Pancake Button (.pancake-button):
+      - `width`, `height`: Overall size of the button.
+      - `.bar height`: Thickness of the individual bars.
+      - `.bar width`: Length of the individual bars (as a percentage of button width).
+
+    - Image & Text Button (.image-text-button):
+      - `max-width`: Maximum width of the entire button.
+      - `padding`: Space within the button.
+      - `.button-image width`, `height`: Size of the image.
+      - `.button-text-content h4 font-size`: Title text size.
+      - `.button-text-content p font-size`: Paragraph text size.
+
+    --- ICONS ---
+
+    - Emoji Buttons:
+      - Change the emoji character directly in the HTML <button> tag.
+        (e.g., <button class="emoji-button circle-hover">✨</button> -> <button class="emoji-button circle-hover">🎉</button>)
+
+    - Link Icon Button:
+      - Change the icon character inside the <span class="hover-icon"></span> in the HTML.
+        (e.g., <span class="hover-icon">→</span> -> <span class="hover-icon">↗</span>)
+
+    --- ANIMATIONS & ADVANCED ---
+
+    - Transitions:
+      - Most animations are handled by the `transition` CSS property on various button
+        classes and their pseudo-elements or child elements.
+      - Properties like `transform`, `opacity`, `background-color`, `max-width`, `color`
+        are commonly transitioned.
+
+    - Transformations:
+      - `transform: scale()` is used for hover effects on `.button` and pseudo-elements
+        in emoji buttons.
+      - `transform: rotate()` and `transform: translate()` are used for the Pancake
+        button's "X" transformation.
+
+    - Clip Path:
+      - The `.hexagon-hover::before` pseudo-element uses `clip-path: polygon(...)` to
+        create its hexagonal shape. You can find clip-path generators online to
+        create other shapes.
+
+    - Responsiveness:
+      - Media queries (`@media (max-width: ...px)`) at the end of the style block
+        handle adjustments for different screen sizes. Modify these to fine-tune
+        responsive behavior.
+
+    */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row; /* Allow wrapping */
+      flex-wrap: wrap; /* Enable wrapping */
+      justify-content: center; /* Center buttons when wrapped */
+      align-items: flex-start; /* Align items to the start of the line */
+      gap: 15px; /* Spacing between wrapped items */
+      padding: 20px; /* Add some padding to the container itself */
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 25px;
+      margin: 10px;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+      transform: scale(1.1);
+    }
+
+    .emoji-button {
+      background: none;
+      border: 2px solid #007bff;
+      padding: 15px;
+      font-size: 2em;
+      cursor: pointer;
+      position: relative; /* For positioning the pseudo-element */
+      overflow: hidden; /* To hide the pseudo-element if it exceeds bounds */
+      transition: color 0.3s ease;
+      margin: 10px;
+    }
+
+    .emoji-button.circle-hover {
+      border-radius: 50%; /* Makes the button itself circular */
+    }
+
+    .emoji-button.circle-hover::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background-color: #007bff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.4s ease-out;
+      z-index: -1; /* Ensure circle is behind the emoji */
+    }
+
+    .emoji-button.circle-hover:hover::before {
+      transform: translate(-50%, -50%) scale(1.2); /* Scale up to cover button */
+    }
+
+    .emoji-button.circle-hover:hover {
+      color: white; /* Change emoji color on hover */
+    }
+
+    /* Hexagon Hover Button */
+    .emoji-button.hexagon-hover::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120%; /* Slightly larger to ensure full cover and sharp edges */
+      height: 120%;
+      background-color: #28a745; /* Green color for hexagon */
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.4s ease-out;
+      z-index: -1;
+    }
+
+    .emoji-button.hexagon-hover:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .emoji-button.hexagon-hover:hover {
+      color: white; /* Change emoji color on hover */
+    }
+
+    /* Link Icon Appears on Hover Button */
+    .link-icon-button {
+      background-color: #ffc107; /* Amber color */
+      color: #212529; /* Dark text color */
+      border: none;
+      padding: 15px 25px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-radius: 5px;
+      margin: 10px;
+      display: inline-flex; /* To align text and icon properly */
+      align-items: center; /* Vertically align items in the button */
+    }
+
+    .link-icon-button .hover-icon {
+      opacity: 0;
+      max-width: 0;
+      overflow: hidden;
+      margin-left: 0px; /* Initially no margin */
+      transition: opacity 0.3s ease, max-width 0.3s ease, margin-left 0.3s ease;
+      font-weight: bold;
+    }
+
+    .link-icon-button:hover {
+      background-color: #e0a800; /* Darker amber */
+    }
+
+    .link-icon-button:hover .hover-icon {
+      opacity: 1;
+      max-width: 20px; /* Adjust as needed for icon size */
+      margin-left: 8px; /* Space between text and icon */
+    }
+
+    /* Pancake Stack to X Button */
+    .pancake-button {
+      width: 40px; /* Adjust size as needed */
+      height: 35px; /* Adjust size as needed */
+      padding: 5px;
+      border: none; /* Or a subtle border: 1px solid #ccc; */
+      background-color: transparent; /* Or a default background */
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around; /* Distributes bars evenly */
+      align-items: center;
+      position: relative;
+      transition: background-color 0.3s ease;
+      border-radius: 4px; /* For hover effect */
+      margin: 10px;
+    }
+
+    .pancake-button:hover {
+      background-color: rgba(0, 0, 0, 0.1); /* Translucent darker square on hover */
+    }
+
+    .pancake-button .bar {
+      display: block;
+      width: 80%; /* Relative to button width */
+      height: 3px; /* Thickness of bars */
+      background-color: #333; /* Bar color */
+      transition: transform 0.3s ease, opacity 0.3s ease, top 0.3s ease;
+      position: relative; /* For non-active state, relative is fine */
+    }
+
+    /* Active state for X transformation */
+    .pancake-button.active .bar {
+      position: absolute; /* Needed for precise positioning in X shape */
+      top: 50%; /* Position relative to center of button */
+      left: 50%;
+      transform-origin: center; /* Rotate around the center of the bar */
+    }
+
+    .pancake-button.active .bar:nth-child(1) {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .pancake-button.active .bar:nth-child(2) {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(0); /* Also shrink to ensure it's gone */
+    }
+
+    .pancake-button.active .bar:nth-child(3) {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Larger Image and Text Button */
+    .image-text-button {
+      display: flex;
+      align-items: center; /* Vertically align items */
+      background-color: #f8f9fa; /* Light grey background */
+      border: 1px solid #dee2e6; /* Light border */
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px;
+      max-width: 400px; /* Max width of the button */
+      text-decoration: none;
+      color: #343a40; /* Dark text color */
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .image-text-button:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .image-text-button .button-image {
+      width: 80px; /* Fixed width for image */
+      height: 80px; /* Fixed height for image */
+      object-fit: cover;
+      border-radius: 6px; /* Rounded corners for image */
+      margin-right: 15px;
+      flex-shrink: 0; /* Prevent image from shrinking */
+    }
+
+    .image-text-button .button-text-content {
+      flex-grow: 1;
+    }
+
+    .image-text-button .button-text-content h4 {
+      margin-top: 0;
+      margin-bottom: 5px;
+      font-size: 1.2em;
+      color: #007bff; /* Title color */
+    }
+
+    .image-text-button .button-text-content p {
+      margin-bottom: 0;
+      font-size: 0.9em;
+      color: #6c757d; /* Paragraph text color */
+    }
+
+    /* Responsive: image above text on smaller screens */
+    @media (max-width: 480px) {
+      .image-text-button {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to start for column layout */
+        max-width: 90%; /* Allow it to take more width */
+        margin-left: auto; /* Center block elements in flex container */
+        margin-right: auto;
+      }
+
+      .image-text-button .button-image {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%; /* Full width image */
+        height: auto; /* Maintain aspect ratio */
+        max-height: 150px; /* Optional: constrain image height */
+      }
+
+      .image-text-button .button-text-content h4,
+      .image-text-button .button-text-content p {
+        text-align: left; /* Ensure text is left-aligned */
+      }
+    }
+
+    /* General Responsive Adjustments */
+    @media (max-width: 768px) { /* Tablet */
+      .container {
+        gap: 10px;
+        padding: 15px;
+      }
+      .button, .emoji-button, .link-icon-button, .pancake-button {
+        margin: 8px; /* Adjust margins for tighter spacing */
+      }
+      .image-text-button {
+        max-width: 350px; /* Slightly reduce max-width */
+        margin: 10px auto; /* Center it if it's the only one in a row */
+      }
+    }
+
+    @media (max-width: 480px) { /* Mobile */
+      body {
+        padding-top: 10px; /* Add some space at the top on mobile */
+        padding-bottom: 10px;
+      }
+      .container {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 1.8em; /* Reduce heading size */
+      }
+      .button, .emoji-button, .link-icon-button, .pancake-button, .image-text-button {
+        /* Make buttons a bit larger for easier tapping, or ensure they have enough padding */
+        padding: 12px 20px; /* General padding adjustment for smaller buttons */
+        font-size: 1em; /* Ensure font size is not too small */
+        margin: 8px 5px; /* Adjust margins */
+      }
+      .emoji-button {
+        padding: 12px; /* Specific adjustment for emoji buttons */
+        font-size: 1.8em; /* Ensure emoji is large enough */
+      }
+      .link-icon-button {
+        padding: 12px 18px;
+      }
+      .pancake-button {
+        width: 38px;
+        height: 33px;
+        padding: 4px;
+      }
+
+      /* Ensure image-text-button specific mobile styles are maintained or enhanced */
+      .image-text-button {
+        padding: 12px; /* Adjust padding for mobile */
+         /* max-width: 95%; /* Take more width on mobile */
+      }
+      .image-text-button .button-text-content h4 {
+        font-size: 1.1em;
+      }
+      .image-text-button .button-text-content p {
+        font-size: 0.85em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Animated Buttons</h1>
+    <button class="emoji-button circle-hover">✨</button>
+    <button class="emoji-button hexagon-hover">🚀</button>
+    <button class="link-icon-button">Learn More <span class="hover-icon">→</span></button>
+    <button class="pancake-button">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <a href="#" class="image-text-button">
+      <img src="https://via.placeholder.com/100" alt="Placeholder Image" class="button-image">
+      <div class="button-text-content">
+        <h4>Feature Title</h4>
+        <p>Discover more about this exciting new feature.</p>
+      </div>
+    </a>
+    <a href="#" class="button">Button 1</a>
+    <a href="#" class="button">Button 2</a>
+    <a href="#" class="button">Button 3</a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const pancakeButton = document.querySelector('.pancake-button');
+      if (pancakeButton) {
+        pancakeButton.addEventListener('click', function() {
+          this.classList.toggle('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
