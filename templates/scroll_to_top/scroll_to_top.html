@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll to Top Button</title>
+    <style>
+        /* --- Scroll to Top Button ---
+           --- Documentation ---
+
+           ** GENERAL USAGE **
+
+           1. Copy the HTML structure for the button (found in the <body> of this file)
+              into your project. It's recommended to place it just before the closing </body> tag.
+           2. Copy the CSS styles (from this <style> block) into your project's stylesheet or
+              within <style> tags in your HTML <head>.
+           3. Copy the JavaScript logic (from the <script> block at the end of this file)
+              into your project's JavaScript file or within <script> tags just before the
+              closing </body> tag (after the button HTML).
+
+           ** CUSTOMIZATION GUIDE **
+
+           --- SIZE ---
+           - `--scroll-to-top-size`: Controls the width and height of the button.
+             Default: `50px`.
+             Example:
+             `#scrollToTopBtn { --scroll-to-top-size: 60px; }`
+
+           --- COLORS ---
+           - `background-color`: Background color of the button.
+             Default: `rgba(0, 0, 0, 0.7)`.
+           - `color`: Color of the arrow icon and circle stroke.
+             Default: `white`.
+           - `:hover background-color`: Background color on hover.
+             Default: `rgba(0, 0, 0, 0.9)`.
+
+           --- POSITION ---
+           - `right`: Distance from the right edge of the viewport.
+             Default: `20px`.
+           - `bottom`: Distance from the bottom edge of the viewport.
+             Default: `20px`.
+
+           --- APPEARANCE ---
+           - `border-radius`: Should generally be `50%` to keep it circular.
+           - `box-shadow`: Controls the shadow around the button.
+           - `transition`: Controls the speed of the fade-in/out animation.
+
+           --- ICON ---
+           The icon is an SVG. You can replace the SVG content within the button
+           if you need a different icon. Ensure the new SVG is styled appropriately
+           (e.g., `fill="currentColor"` for parts that should adopt the button's text color).
+           The existing SVG has a path for the arrow and a circle for the border.
+           The `stroke-width` of the SVG circle can be adjusted directly in the SVG if needed.
+
+           --- BEHAVIOR ---
+           - Scroll Threshold: The button appears after scrolling down one viewport height.
+             To change this, you would need to modify the JavaScript condition:
+             `if (window.scrollY > window.innerHeight)`
+             in the script section. For example, to make it appear after 300 pixels:
+             `if (window.scrollY > 300)`
+        */
+
+        #scrollToTopBtn {
+            --scroll-to-top-size: 50px; /* Customizable size */
+
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: var(--scroll-to-top-size);
+            height: var(--scroll-to-top-size);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%; /* Makes it circular */
+            padding: 0; /* Reset padding */
+            cursor: pointer;
+            z-index: 1000; /* Ensure it's above most other content */
+
+            /* Initial state: hidden */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px); /* Start slightly lower for a subtle animation */
+
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        #scrollToTopBtn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        #scrollToTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0); /* Move to final position */
+        }
+
+        /* Styling for the SVG icon within the button */
+        #scrollToTopBtn svg {
+            display: block; /* Remove extra space below SVG */
+            width: 60%; /* Adjust size of icon relative to button */
+            height: 60%; /* Adjust size of icon relative to button */
+            margin: auto; /* Center SVG in button */
+        }
+
+        /* Ensure the circle part of the SVG uses the button's color for its stroke */
+        #scrollToTopBtn svg circle {
+            stroke: currentColor; /* Use the 'color' property of the button */
+            stroke-width: 2px; /* Thinner stroke for the circle */
+            fill: none; /* No fill for the circle itself */
+        }
+
+        /* The arrow path should use the button's color for its fill */
+        #scrollToTopBtn svg path[d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"] {
+            fill: currentColor;
+        }
+        /* Hide the default path that makes a solid background for the icon */
+         #scrollToTopBtn svg path[d="M0 0h24v24H0z"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!--
+        --- SCROLL TO TOP BUTTON ---
+        Copy the following HTML structure into your page.
+        It's recommended to place it just before the closing </body> tag.
+    -->
+    <button id="scrollToTopBtn" title="Go to top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <!-- This path is for the upward arrow -->
+            <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+            <!-- This circle provides the border -->
+            <circle cx="12" cy="12" r="11"/>
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopButton = document.getElementById('scrollToTopBtn');
+
+            if (!scrollToTopButton) {
+                console.error('Scroll to Top button element not found.');
+                return;
+            }
+
+            // Show or hide the button based on scroll position
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > window.innerHeight) {
+                    scrollToTopButton.classList.add('visible');
+                } else {
+                    scrollToTopButton.classList.remove('visible');
+                }
+            });
+
+            // Scroll to top when the button is clicked
+            scrollToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

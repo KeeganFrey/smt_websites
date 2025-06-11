@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll to Top Button - Test Runner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-top: 20px; /* Space for results */
+            /* Make body very long to ensure scrolling */
+            height: 300vh; /* 3 times viewport height */
+            background-color: #f0f0f0;
+        }
+
+        #test-results-summary {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            z-index: 2000; /* Above the button */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 0.9em;
+        }
+
+        #test-results {
+            margin-top: 50px; /* Below summary */
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .test-result { padding: 6px; border-bottom: 1px solid #eee; }
+        .test-result.pass { color: green; }
+        .test-result.fail { color: red; font-weight: bold; }
+        .test-title { font-weight: bold; margin-top:10px; }
+
+        /* Copied CSS for #scrollToTopBtn from scroll_to_top.html */
+        #scrollToTopBtn {
+            --scroll-to-top-size: 50px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: var(--scroll-to-top-size);
+            height: var(--scroll-to-top-size);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 0;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        #scrollToTopBtn:hover { background-color: rgba(0, 0, 0, 0.9); }
+        #scrollToTopBtn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        #scrollToTopBtn svg { display: block; width: 60%; height: 60%; margin: auto; }
+        #scrollToTopBtn svg circle { stroke: currentColor; stroke-width: 2px; fill: none; }
+        #scrollToTopBtn svg path[d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"] { fill: currentColor; }
+        #scrollToTopBtn svg path[d="M0 0h24v24H0z"] { display: none; }
+
+        /* Dummy content to make page scrollable */
+        .content-block {
+            height: 50vh;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ddd;
+            border: 1px solid #bbb;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="test-results-summary">
+        Scroll to Top Button Tests: <span id="summary-status">Running...</span>
+        (<span id="pass-count">0</span> Passed, <span id="fail-count">0</span> Failed)
+    </div>
+
+    <!-- Scroll to Top Button HTML (copied from scroll_to_top.html) -->
+    <button id="scrollToTopBtn" title="Go to top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+            <circle cx="12" cy="12" r="11"/>
+        </svg>
+    </button>
+
+    <div id="test-results">
+        <h2>Test Log:</h2>
+        <!-- Test results will be appended here by test.js -->
+    </div>
+
+    <!-- Dummy content for scrolling -->
+    <div class="content-block">Content Block 1</div>
+    <div class="content-block">Content Block 2</div>
+    <div class="content-block">Content Block 3</div>
+    <div class="content-block">Content Block 4</div>
+    <div class="content-block">Content Block 5</div>
+    <div class="content-block">Content Block 6</div>
+
+
+    <!-- JavaScript for the button (copied from scroll_to_top.html) -->
+    <script id="scroll-to-top-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopButton = document.getElementById('scrollToTopBtn');
+            if (!scrollToTopButton) {
+                // This case should be handled by a test if the button is expected
+                // console.error('Scroll to Top button element not found in test runner.');
+                return;
+            }
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > window.innerHeight) {
+                    scrollToTopButton.classList.add('visible');
+                } else {
+                    scrollToTopButton.classList.remove('visible');
+                }
+            });
+            scrollToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth' // Note: 'smooth' behavior can make automated scrollY checks tricky due to timing.
+                                      // For tests, 'auto' or 'instant' might be better if checking scrollY immediately after.
+                                      // However, for this component, smooth is part of the requirement.
+                });
+            });
+        });
+    </script>
+
+    <!-- Test Script -->
+    <script src="test.js"></script>
+</body>
+</html>
