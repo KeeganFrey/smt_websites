@@ -13,6 +13,12 @@
         <h2>Simple Clicker Game</h2>
         <button id="gameButton">Click Me!</button>
     </div>
+    <div id="lights-out-container">
+        <h2>Lights Out</h2>
+        <div id="lights-out-grid"></div>
+        <button id="lights-out-reset-button">Reset Game</button>
+    </div>
     <script src="{{ url_for('static', filename='game.js') }}"></script>
+    <script src="{{ url_for('static', filename='lights_out.js') }}"></script>
 </body>
 </html>
