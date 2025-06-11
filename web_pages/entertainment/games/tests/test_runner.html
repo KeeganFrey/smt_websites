@@ -19,9 +19,19 @@
         <button id="gameButton">Click Me!</button>
     </div>
 
-    <!-- Include the game script -->
+    <!-- Added HTML structure for Lights Out game -->
+    <div id="lights-out-container" style="display: none;">
+        <h2>Lights Out Test</h2> <!-- Title for clarity in test runner if shown -->
+        <div id="lights-out-grid"></div>
+        <button id="lights-out-reset-button">Reset Game</button>
+    </div>
+
+    <!-- Include the game scripts -->
     <script src="../static/game.js"></script>
-    <!-- Include the test script -->
+    <script src="../static/lights_out.js"></script> <!-- Lights Out game script -->
+
+    <!-- Include the test scripts -->
     <script src="test_game.js"></script>
+    <script src="test_lights_out.js"></script> <!-- Lights Out test script -->
 </body>
 </html>
