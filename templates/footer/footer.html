@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Template</title>
+    <style>
+        /* --- Footer Template Documentation ---
+
+        ** GENERAL USAGE **
+
+        1. Copy the HTML for the <footer class="site-footer">...</footer>
+           into your desired HTML file, placing it usually before the closing </body> tag.
+        2. Copy the CSS rules below into your project's stylesheet or within <style> tags
+           in your HTML file's <head>.
+        3. If you need the dynamic year functionality, ensure the JavaScript snippet
+           (found before the closing </body> tag) is also included.
+
+        ** CUSTOMIZATION GUIDE **
+
+        --- COLORS & APPEARANCE ---
+        - `.site-footer`:
+          - `background-color`: Sets the background color of the footer.
+          - `color`: Sets the default text color for the footer.
+          - `padding`: Adjusts the space inside the footer.
+          - `text-align`: Can be used to change the alignment of all text (e.g., center).
+        - `.footer-content h4`:
+          - `color`: Sets the color of the section titles (Contact Us, Sitemap).
+        - `.footer-content a`:
+          - `color`: Sets the color of links.
+          - `:hover color`: Sets the color of links on hover.
+        - `.copyright p`:
+          - `color`: Sets the color of the copyright text.
+
+        --- LAYOUT & SPACING ---
+        - `.site-footer`:
+          - `min-height`: You can set a minimum height if desired. By default, height is
+                          determined by content and padding.
+        - `.footer-content`:
+          - `display: flex`, `flex-wrap: wrap`, `justify-content: space-around`: These properties
+            control the layout of the footer sections. `space-around` distributes space
+            around the items. Change to `space-between` or `flex-start` for different alignments.
+          - `gap`: Defines the space between the footer sections.
+          - `max-width`: Constrains the width of the content within the footer, allowing
+                         the footer background to span full width while content remains centered.
+        - `.footer-section`:
+          - `flex`: Controls how sections grow and shrink. `1 1 200px` means they can grow,
+                    can shrink, and have a base width of 200px.
+          - `margin-bottom`: Adds space below each section on smaller screens when they stack.
+
+        --- RESPONSIVENESS ---
+        - The footer is designed to be responsive by default due to flexbox wrapping.
+        - `@media (max-width: 768px)`:
+          - `justify-content: flex-start`: On smaller screens, sections align to the start.
+          - `.footer-section text-align`: Sections can have their text centered or left-aligned.
+
+        */
+
+        body { /* Basic reset for demo purposes */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .site-footer {
+            background-color: #2c3e50; /* Dark blue-grey background */
+            color: #ecf0f1; /* Light grey text */
+            padding: 40px 20px; /* Vertical and horizontal padding */
+            width: 100%; /* Ensures footer spans full screen width */
+            box-sizing: border-box; /* Includes padding in width calculation */
+            text-align: left;
+            min-height: 100px; /* Example: minimum height */
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+            justify-content: space-around; /* Distributes space around items */
+            align-items: flex-start; /* Aligns items to the top */
+            max-width: 1200px; /* Max width for the content within the footer */
+            margin: 0 auto; /* Centers the content container */
+            gap: 20px; /* Space between flex items */
+        }
+
+        .footer-section {
+            flex: 1 1 200px; /* Flex properties: grow, shrink, basis */
+            margin-bottom: 20px; /* Space below each section when they stack */
+        }
+
+        .footer-section h4 {
+            color: #ffffff; /* White color for headings */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            margin: 0;
+            padding: 0;
+            list-style: none; /* Remove default list styling */
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            color: #3498db; /* Bright blue for links */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #5dade2; /* Lighter blue on hover */
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            width: 100%; /* Make copyright span full width of the content area */
+            margin-top: 20px; /* Space above copyright text */
+            padding-top: 20px; /* Space inside the copyright section, above the text */
+            border-top: 1px solid #34495e; /* Separator line */
+            font-size: 0.9em;
+            color: #bdc3c7; /* Slightly muted text color for copyright */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .footer-content {
+                justify-content: flex-start; /* Align items to the start on smaller screens */
+                flex-direction: column; /* Stack sections vertically */
+                align-items: center; /* Center sections when stacked */
+            }
+
+            .footer-section {
+                flex-basis: 100%; /* Each section takes full width when stacked */
+                text-align: center; /* Center text within sections on mobile */
+                margin-bottom: 30px;
+            }
+            .footer-section:last-child {
+                margin-bottom: 0;
+            }
+            .site-footer {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section contact-info">
+                <h4>Contact Us</h4>
+                <p>Email: <a href="mailto:info@example.com">info@example.com</a></p>
+                <p>Phone: +1 (123) 456-7890</p>
+            </div>
+
+            <div class="footer-section sitemap">
+                <h4>Sitemap</h4>
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section copyright">
+                <p>&copy; <span id="current-year"></span> Your Company. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* --- Footer JavaScript Documentation ---
+
+        ** FUNCTIONALITY **
+
+        - `updateCopyrightYear()`: This function finds an element with the ID `current-year`
+          and updates its text content with the current year.
+
+        ** USAGE **
+
+        1. Ensure you have an element in your HTML with `id="current-year"` where you
+           want the current year to be displayed. For example:
+           `<p>&copy; <span id="current-year"></span> Your Company. All Rights Reserved.</p>`
+        2. Include this script block in your HTML file, preferably just before the
+           closing `</body>` tag.
+
+        ** CUSTOMIZATION **
+
+        - If you use a different ID for the year placeholder, update the
+          `document.getElementById("current-year")` line in the script to match your ID.
+        */
+
+        function updateCopyrightYear() {
+            const yearSpan = document.getElementById("current-year");
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateCopyrightYear);
+    </script>
+</body>
+</html>

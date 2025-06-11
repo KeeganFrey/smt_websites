@@ -12,4 +12,5 @@ This folder contains reusable HTML templates for common website features.
 
 ## Available Templates
 
-- `pdf_viewer.html`: A template for embedding a PDF document into a webpage.
+*   **PDF Viewer**: `pdf_viewer/` - A template to embed and display PDF documents.
+*   **Footer**: `footer/` - A responsive site footer template with sections for contact info, sitemap, and a dynamic copyright year.
