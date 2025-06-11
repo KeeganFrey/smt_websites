@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Screen Menu Example</title>
+    <style>
+      /* Basic reset for demonstration - you might have your own reset */
+      body, html {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      /* Main menu container */
+      .top-screen-menu-container {
+        width: 100%;
+        /* Default height: 4vh (viewport height). See docs above for customization. */
+        height: 4vh;
+        background-color: #f0f0f0; /* Light grey background */
+        display: flex; /* Arranges categories horizontally */
+        position: fixed; /* Sticks the menu to the top of the viewport */
+        top: 0;
+        left: 0;
+        z-index: 1000; /* Ensures menu stays on top of other content */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+      }
+
+      /* Category elements within the menu */
+      .category {
+        padding: 0 15px; /* Horizontal spacing for category names */
+        /* Vertically centers text. Match this with .top-screen-menu-container height. */
+        line-height: 4vh;
+        cursor: default; /* Standard cursor as hover on category reveals sub-menu */
+        position: relative; /* Crucial: allows sub-menus to be positioned relative to this element */
+        color: #333; /* Text color for category names */
+      }
+
+      .category h2 { /* Styling for the category titles (e.g., "Fruit") */
+        font-size: 1em; /* Adjust font size as needed */
+        margin: 0; /* Remove default margins from h2 */
+        font-weight: normal; /* Lighter font weight, can be 'bold' if preferred */
+      }
+
+      /* Sub-element lists (the dropdown part) */
+      .sub-menu {
+        list-style-type: none; /* Removes default list bullets (e.g., circles, squares) */
+        padding: 0; /* Remove default padding */
+        margin: 0; /* Remove default margin */
+        position: absolute; /* Positions the sub-menu relative to its parent .category */
+        top: 100%; /* Starts the sub-menu directly below the category item */
+        left: 0; /* Aligns the sub-menu to the left edge of the category item */
+        background-color: #fff; /* Background color for the dropdown */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Shadow for visual separation */
+        min-width: 160px; /* Minimum width for the dropdown */
+
+        /* Core logic for the fade-in and slide-down animation */
+        opacity: 0; /* Initially hidden (invisible) */
+        max-height: 0; /* Initially no height (collapsed) */
+        overflow: hidden; /* Prevents content from spilling out when collapsed */
+        /* Smooth transition for opacity and max-height changes */
+        transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out;
+      }
+
+      /* Styling for individual list items (<li>) and links (<a>) in the sub-menu */
+      .sub-menu li a {
+        display: block; /* Makes the entire link area clickable, not just the text */
+        padding: 10px 15px; /* Padding within each sub-menu item for spacing */
+        text-decoration: none; /* Removes the default underline from links */
+        color: #333; /* Text color for sub-menu links */
+        white-space: nowrap; /* Prevents link text from wrapping to the next line */
+      }
+
+      .sub-menu li a:hover {
+        background-color: #e9e9e9; /* Background color on hover for sub-menu items */
+      }
+
+      /* Hover effect: shows the sub-menu when its parent category is hovered */
+      .category:hover .sub-menu {
+        opacity: 1; /* Makes the sub-menu fully visible */
+        /* Expands the sub-menu. Adjust this value if your sub-menu is taller. See docs. */
+        max-height: 500px;
+      }
+
+      /* Additional styles for the example page content */
+      .page-content {
+        padding-top: 6vh; /* Start content below the fixed menu (4vh menu height + some buffer) */
+        padding-left: 20px;
+        padding-right: 20px;
+        height: 200vh; /* Make page scrollable to demonstrate fixed menu */
+        background-color: #f9f9f9;
+      }
+      .page-content h1 {
+        margin-top: 20px;
+      }
+    </style>
+</head>
+<body>
+
+<!-- Copied Menu Structure -->
+<div class="top-screen-menu-container">
+  <div class="category">
+    <h2>Fruit</h2>
+    <ul class="sub-menu">
+      <li><a href="#">apple</a></li>
+      <li><a href="#">banana</a></li>
+      <li><a href="#">pear</a></li>
+      <li><a href="#">orange</a></li>
+      <li><a href="#">blueberry</a></li>
+      <li><a href="#">peach</a></li>
+    </ul>
+  </div>
+  <div class="category">
+    <h2>Vegetables</h2>
+    <ul class="sub-menu">
+      <li><a href="#">peppers</a></li>
+      <li><a href="#">cucumbers</a></li>
+      <li><a href="#">lettuce</a></li>
+    </ul>
+  </div>
+</div>
+<!-- End of Copied Menu Structure -->
+
+<div class="page-content">
+  <h1>Top Screen Menu Example Page</h1>
+  <p>This page demonstrates the top screen menu. The menu above should stay fixed at the top as you scroll.</p>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>Scroll down to see the effect...</p>
+  <br><br><br><br><br><br><br><br><br><br>
+  <p>More content to make the page scrollable...</p>
+  <br><br><br><br><br><br><br><br><br><br>
+  <p>Still more content...</p>
+  <br><br><br><br><br><br><br><br><br><br>
+  <p>The menu should remain visible at the top.</p>
+</div>
+
+</body>
+</html>
