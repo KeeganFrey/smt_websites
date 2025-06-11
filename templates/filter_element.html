@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Element</title>
+    <style>
+        /* --- Filter Element Documentation ---
+         *
+         * ** GENERAL USAGE **
+         * 1. Copy the HTML structure from the <body> of this file into your project.
+         * 2. Copy the CSS rules from this <style> block into your project's stylesheet or <head>.
+         * 3. Copy the JavaScript from the <script> block at the end of the <body> if you need expandable sections.
+         *
+         * ** CUSTOMIZATION GUIDE **
+         *
+         * --- SIZING THE FILTER CONTAINER ---
+         * The `.filter-container` can be sized in several ways:
+         * - Max Width (default): `max-width: 300px;` (as currently set). It will shrink if content is smaller.
+         * - Fixed Width: `width: 250px;`
+         * - Percentage Width: `width: 80%;` (relative to its parent)
+         * - Fit Content: Remove `width` and `max-width`. It will size to its content.
+         * - Height:
+         *   - `height: 400px;` (fixed height)
+         *   - `max-height: 50vh;` (maximum 50% of viewport height, then scrolls)
+         *   - If height is set, ensure `.filter-options` also has appropriate height/max-height.
+         *
+         * --- SCROLLING ---
+         * - The `.filter-options` div is designed to be scrollable if its content exceeds its `max-height`.
+         *
+         * --- EXPANDABLE SECTIONS ---
+         * - Click the header (e.g., "Fruit") to toggle visibility of its content.
+         * - The arrow icon rotates automatically.
+         * - To add more expandable sections, copy the `.expandable-section` HTML structure.
+         *
+         * --- STYLING ---
+         * - Adjust `font-family`, `background-color`, `padding`, `border-radius`, `box-shadow` on `.filter-container` for overall appearance.
+         * - Style headers (`.expandable-header`), content (`.expandable-content`), and form elements as needed.
+         */
+
+        body { /* Basic styling for demo page */
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            display: flex; /* For centering the demo */
+            justify-content: center; /* For centering the demo */
+            align-items: flex-start; /* For centering the demo */
+            min-height: 100vh; /* For centering the demo */
+        }
+
+        .filter-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px; /* Default max-width, see docs above for more sizing options */
+            /* Add other sizing properties here as needed, e.g.: */
+            /* width: 250px; */
+            /* height: 400px; */
+            /* For a fixed height container, you might set height here and ensure filter-options can fill it: */
+            /* height: 500px; display: flex; flex-direction: column; */
+        }
+
+        .filter-options {
+            /* Enables vertical scrolling if content overflows */
+            overflow-y: auto;
+            /* Sets a maximum height before scrolling begins. Adjust as needed. */
+            /* Can be a fixed value (e.g., 300px) or viewport relative (e.g., 40vh) */
+            max-height: 300px; /* Example max-height. Consider using vh for viewport scaling e.g. 40vh */
+            /* If .filter-container has a fixed height and flex direction column, use flex-grow: 1; here */
+        }
+
+        .filter-options h3 { /* General heading for filter sections if used (not in current HTML structure) */
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .expandable-section {
+            margin-bottom: 15px; /* Space between expandable sections */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden; /* Ensures content doesn't spill past border-radius */
+        }
+        .expandable-section:last-of-type {
+            margin-bottom: 0; /* No margin for the last section before a .filter-group or end */
+        }
+
+
+        .expandable-header {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px 15px;
+            width: 100%; /* Full width of its parent */
+            text-align: left;
+            border: none; /* Reset default button border */
+            /* Border management: Apply border to header, remove when content shown for seamless look */
+            border-bottom: 1px solid #ddd;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex; /* For aligning text and arrow */
+            justify-content: space-between; /* Puts arrow on the right */
+            align-items: center; /* Vertically aligns text and arrow */
+            transition: background-color 0.3s ease;
+        }
+
+        .expandable-section:last-of-type .expandable-header {
+            /* If it's the last section, its header's bottom border might be redundant if not expanded */
+             /* border-bottom: 1px solid #ddd; /* This ensures it always has a line if not expanded */
+        }
+
+        /* When expanded, remove the header's bottom border as content below will have its own separation (or lack thereof) */
+        .expandable-header.expanded {
+            border-bottom-color: transparent;
+        }
+
+
+        .expandable-header:hover {
+            background-color: #e0e0e0; /* Visual feedback on hover */
+        }
+
+        .expandable-arrow {
+            font-size: 0.8em; /* Size of the arrow */
+            transition: transform 0.3s ease; /* Smooth rotation animation */
+        }
+
+        /* Class added by JavaScript to rotate arrow when expanded */
+        .expandable-header.expanded .expandable-arrow {
+            transform: rotate(90deg); /* Rotates arrow down */
+        }
+
+        .expandable-content {
+            padding: 15px; /* Padding within the content area of an expandable section */
+            background-color: #fff; /* Background for content area */
+            /* 'display: none;' is set inline by JS. If JS fails, content might be visible.
+               Can add 'display: none;' here as default and JS would toggle to 'block'. */
+        }
+
+        .expandable-content div { /* Styling for each item (e.g., checkbox line) */
+            margin-bottom: 10px; /* Spacing between items in content */
+        }
+        .expandable-content div:last-child {
+            margin-bottom: 0; /* No margin for the last item */
+        }
+
+        .expandable-content label {
+            margin-left: 8px; /* Space between checkbox and its label text */
+            color: #555;
+            cursor: pointer; /* Improves UX by making label clickable for checkbox */
+        }
+         .expandable-content input[type="checkbox"] {
+            margin-right: 4px; /* Optional: small space after checkbox */
+            vertical-align: middle; /* Aligns checkbox nicely with the label text */
+        }
+
+
+        .filter-group { /* Styling for non-expandable filter groups like "Price Range" */
+            margin-top: 20px; /* Space above the filter group */
+            padding-top: 15px; /* Padding inside the filter group, above its content */
+            border-top: 1px solid #eee; /* Separator line */
+        }
+
+        /* If a filter-group is the very first element in filter-options, remove its top spacing/border */
+        .filter-options > .filter-group:first-child {
+             border-top: none;
+             margin-top:0;
+             padding-top:0;
+        }
+
+
+        .filter-group h4 { /* Heading for a filter group */
+            margin-top: 0; /* Remove default margin */
+            margin-bottom: 12px; /* Space below heading */
+            color: #333;
+            font-size: 1em;
+        }
+
+        .filter-group div { /* Each row within a filter group (e.g. Min price line) */
+            margin-bottom: 10px; /* Space between rows */
+            display: flex; /* For aligning label and input */
+            align-items: center; /* Vertically aligns label and input */
+        }
+
+        .filter-group label {
+            margin-right: 8px; /* Space between label (e.g., "Min:") and input */
+            color: #555;
+            font-size: 0.9em; /* Slightly smaller font for these labels */
+            min-width: 35px; /* Ensures labels like Min:/Max: align vertically */
+        }
+
+        .filter-group input[type="number"] {
+            padding: 6px 8px; /* Padding inside number inputs */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+            /* width is set inline in HTML for these specific inputs, can be moved here */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="filter-container">
+        <div class="filter-options">
+            <!-- Example Expandable Section -->
+            <div class="expandable-section">
+                <button class="expandable-header">
+                    Fruit <span class="expandable-arrow">&#9656;</span>
+                </button>
+                <div class="expandable-content" style="display: none;">
+                    <div>
+                        <input type="checkbox" id="fruit-apple" name="fruit-apple">
+                        <label for="fruit-apple">Apple</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fruit-banana" name="fruit-banana">
+                        <label for="fruit-banana">Banana</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fruit-pear" name="fruit-pear">
+                        <label for="fruit-pear">Pear</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fruit-orange" name="fruit-orange">
+                        <label for="fruit-orange">Orange</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fruit-blueberry" name="fruit-blueberry">
+                        <label for="fruit-blueberry">Blueberry</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fruit-peach" name="fruit-peach">
+                        <label for="fruit-peach">Peach</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expandable-section">
+                <button class="expandable-header">
+                    Color <span class="expandable-arrow">&#9656;</span>
+                </button>
+                <div class="expandable-content" style="display: none;">
+                    <div>
+                        <input type="checkbox" id="color-red" name="color-red">
+                        <label for="color-red">Red</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-green" name="color-green">
+                        <label for="color-green">Green</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-blue" name="color-blue">
+                        <label for="color-blue">Blue</label>
+                    </div>
+                     <div>
+                        <input type="checkbox" id="color-yellow" name="color-yellow">
+                        <label for="color-yellow">Yellow</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-purple" name="color-purple">
+                        <label for="color-purple">Purple</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-black" name="color-black">
+                        <label for="color-black">Black</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-white" name="color-white">
+                        <label for="color-white">White</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-orange" name="color-orange">
+                        <label for="color-orange">Orange</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="color-pink" name="color-pink">
+                        <label for="color-pink">Pink</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other filter elements can go here -->
+            <div class="filter-group">
+                <h4>Price Range</h4>
+                <div>
+                    <label for="min-price">Min:</label>
+                    <input type="number" id="min-price" name="min-price" style="width: 70px;">
+                </div>
+                <div>
+                    <label for="max-price">Max:</label>
+                    <input type="number" id="max-price" name="max-price" style="width: 70px;">
+                </div>
+            </div>
+             <div class="filter-group">
+                <h4>Rating</h4>
+                <div>
+                    <label for="min-rating">Min:</label>
+                    <input type="number" id="min-rating" name="min-rating" min="1" max="5" style="width: 70px;">
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const expandableHeaders = document.querySelectorAll('.expandable-header');
+
+            expandableHeaders.forEach(header => {
+                header.addEventListener('click', function () {
+                    this.classList.toggle('expanded');
+                    const content = this.nextElementSibling;
+                    if (content.style.display === 'none' || content.style.display === '') {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

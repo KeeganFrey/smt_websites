@@ -13,3 +13,4 @@ This folder contains reusable HTML templates for common website features.
 ## Available Templates
 
 - `pdf_viewer.html`: A template for embedding a PDF document into a webpage.
+- `filter_element.html`: A template for a filter UI component with support for flexible sizing, scrollable content, and expandable sections. Includes an example for filtering by fruit and price range.

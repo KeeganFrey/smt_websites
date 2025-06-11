@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Element - Sizing Tests</title>
+    <style>
+        /* Original CSS from filter_element.html */
+        /* --- Filter Element Documentation ---
+         * ... (documentation from original file - omitted for brevity in this thought block, but will be included in the file)
+         */
+
+        body { /* Adjusted for test page layout */
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #e8e8e8; /* Slightly different background for test page */
+        }
+
+        h2 {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .test-case-wrapper {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px dashed #aaa;
+            background-color: #f9f9f9;
+        }
+
+        /* Styles from filter_element.html */
+        .filter-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            /* height: 500px; display: flex; flex-direction: column; */ /* Example for fixed height container */
+        }
+
+        .filter-options {
+            overflow-y: auto;
+            max-height: 300px;
+            /* If .filter-container has a fixed height and flex direction column, use flex-grow: 1; here */
+        }
+
+        .filter-options h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .expandable-section {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .expandable-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .expandable-header {
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px 15px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .expandable-section:last-of-type .expandable-header {
+             /* border-bottom: 1px solid #ddd; */
+        }
+
+        .expandable-header.expanded {
+            border-bottom-color: transparent;
+        }
+
+        .expandable-header:hover {
+            background-color: #e0e0e0;
+        }
+
+        .expandable-arrow {
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .expandable-header.expanded .expandable-arrow {
+            transform: rotate(90deg);
+        }
+
+        .expandable-content {
+            padding: 15px;
+            background-color: #fff;
+        }
+
+        .expandable-content div {
+            margin-bottom: 10px;
+        }
+        .expandable-content div:last-child {
+            margin-bottom: 0;
+        }
+
+        .expandable-content label {
+            margin-left: 8px;
+            color: #555;
+            cursor: pointer;
+        }
+         .expandable-content input[type="checkbox"] {
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .filter-group {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .filter-options > .filter-group:first-child {
+             border-top: none;
+             margin-top:0;
+             padding-top:0;
+        }
+
+        .filter-group h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .filter-group div {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-group label {
+            margin-right: 8px;
+            color: #555;
+            font-size: 0.9em;
+            min-width: 35px;
+        }
+
+        .filter-group input[type="number"] {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Test Case Specific Styles */
+        .filter-container-fixed-width {
+            width: 200px;
+            max-width: none; /* Override default max-width */
+            margin: 0 auto; /* Center if desired */
+        }
+
+        .filter-container-percentage-width {
+            width: 50%; /* Will be 50% of its parent */
+            max-width: none; /* Override default max-width */
+            margin: 0 auto; /* Center if desired */
+        }
+        .percentage-width-parent { /* Helper for percentage test */
+            width: 80%; /* Outer container to show percentage effect */
+            margin: 0 auto; /* Center the parent */
+            border: 1px dashed green;
+            padding: 10px;
+        }
+
+
+        .filter-container-fixed-height {
+            height: 250px; /* Fixed height */
+            max-width: 350px; /* Give it a max-width too */
+            margin: 0 auto; /* Center if desired */
+            display: flex; /* Added to make filter-options fill height */
+            flex-direction: column; /* Added to make filter-options fill height */
+        }
+        .filter-container-fixed-height .filter-options {
+            flex-grow: 1; /* Allows filter-options to take available space */
+            min-height: 0; /* Important for flex item with overflow */
+            max-height: none; /* Override original max-height if we want it to strictly follow parent's height */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Test Case 1: Default Max-Width (300px) -->
+    <h2>Test Case 1: Default Max-Width (currently 300px)</h2>
+    <div class="test-case-wrapper">
+        <p>This filter element uses the default <code>max-width: 300px;</code> set on <code>.filter-container</code>. It should not exceed this width. The height is determined by its content, up to the <code>max-height</code> of <code>.filter-options</code>.</p>
+        <div class="filter-container" id="filter-default">
+            <div class="filter-options">
+                <div class="expandable-section">
+                    <button class="expandable-header">Fruit <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="f-apple-1"><label for="f-apple-1">Apple</label></div>
+                        <div><input type="checkbox" id="f-banana-1"><label for="f-banana-1">Banana</label></div>
+                        <div><input type="checkbox" id="f-orange-1"><label for="f-orange-1">Orange</label></div>
+                    </div>
+                </div>
+                <div class="expandable-section">
+                    <button class="expandable-header">Color <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="c-red-1"><label for="c-red-1">Red</label></div>
+                        <div><input type="checkbox" id="c-green-1"><label for="c-green-1">Green</label></div>
+                        <div><input type="checkbox" id="c-blue-1"><label for="c-blue-1">Blue</label></div>
+                        <div><input type="checkbox" id="c-yellow-1"><label for="c-yellow-1">Yellow</label></div>
+                        <div><input type="checkbox" id="c-purple-1"><label for="c-purple-1">Purple</label></div>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <h4>Price Range</h4>
+                    <div><label for="min-p-1">Min:</label><input type="number" id="min-p-1" style="width: 70px;"></div>
+                    <div><label for="max-p-1">Max:</label><input type="number" id="max-p-1" style="width: 70px;"></div>
+                </div>
+                 <div class="filter-group"><h4>Rating</h4><div><label for="min-r-1">Min:</label><input type="number" id="min-r-1" min="1" max="5" style="width: 70px;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Case 2: Fixed Width (200px) -->
+    <h2>Test Case 2: Fixed Width (200px)</h2>
+    <div class="test-case-wrapper">
+        <p>This filter element is styled with <code>width: 200px;</code>. The <code>.filter-container-fixed-width</code> class is applied.</p>
+        <div class="filter-container filter-container-fixed-width" id="filter-fixed-width">
+            <div class="filter-options">
+                <div class="expandable-section">
+                    <button class="expandable-header">Fruit <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="f-apple-2"><label for="f-apple-2">Apple</label></div>
+                        <div><input type="checkbox" id="f-banana-2"><label for="f-banana-2">Banana</label></div>
+                    </div>
+                </div>
+                <div class="expandable-section">
+                    <button class="expandable-header">Color <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="c-red-2"><label for="c-red-2">Red</label></div>
+                        <div><input type="checkbox" id="c-green-2"><label for="c-green-2">Green</label></div>
+                        <div><input type="checkbox" id="c-blue-2"><label for="c-blue-2">Blue</label></div>
+                    </div>
+                </div>
+                <div class="filter-group"><h4>Price Range</h4><div><label for="min-p-2">Min:</label><input type="number" id="min-p-2" style="width: 60px;"></div><div><label for="max-p-2">Max:</label><input type="number" id="max-p-2" style="width: 60px;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Case 3: Percentage Width (50% of an 80% wide parent) -->
+    <h2>Test Case 3: Percentage Width (50% of parent)</h2>
+    <div class="test-case-wrapper percentage-width-parent">
+        <p>This filter element is styled with <code>width: 50%;</code> (class <code>.filter-container-percentage-width</code>). Its parent div is 80% of the page width and has a dashed green border.</p>
+        <div class="filter-container filter-container-percentage-width" id="filter-percentage-width">
+            <div class="filter-options">
+                 <div class="expandable-section">
+                    <button class="expandable-header">Fruit <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="f-apple-3"><label for="f-apple-3">Apple</label></div>
+                        <div><input type="checkbox" id="f-banana-3"><label for="f-banana-3">Banana</label></div>
+                        <div><input type="checkbox" id="f-orange-3"><label for="f-orange-3">Orange</label></div>
+                    </div>
+                </div>
+                <div class="filter-group"><h4>Price Range</h4><div><label for="min-p-3">Min:</label><input type="number" id="min-p-3" style="width: 70px;"></div><div><label for="max-p-3">Max:</label><input type="number" id="max-p-3" style="width: 70px;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Case 4: Fixed Height (250px) and Scrollable Options -->
+    <h2>Test Case 4: Fixed Height (250px)</h2>
+    <div class="test-case-wrapper">
+        <p>This filter element is styled with <code>height: 250px;</code> (class <code>.filter-container-fixed-height</code>). The <code>.filter-options</code> inside it should take up available height and scroll if content overflows. It also has a <code>max-width: 350px;</code>.</p>
+        <div class="filter-container filter-container-fixed-height" id="filter-fixed-height">
+            <div class="filter-options">
+                <div class="expandable-section">
+                    <button class="expandable-header">Fruit <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="f-apple-4"><label for="f-apple-4">Apple</label></div>
+                        <div><input type="checkbox" id="f-banana-4"><label for="f-banana-4">Banana</label></div>
+                        <div><input type="checkbox" id="f-pear-4"><label for="f-pear-4">Pear</label></div>
+                        <div><input type="checkbox" id="f-orange-4"><label for="f-orange-4">Orange</label></div>
+                        <div><input type="checkbox" id="f-blueberry-4"><label for="f-blueberry-4">Blueberry</label></div>
+                        <div><input type="checkbox" id="f-peach-4"><label for="f-peach-4">Peach</label></div>
+                    </div>
+                </div>
+                <div class="expandable-section">
+                    <button class="expandable-header">Color <span class="expandable-arrow">&#9656;</span></button>
+                    <div class="expandable-content" style="display: none;">
+                        <div><input type="checkbox" id="c-red-4"><label for="c-red-4">Red</label></div>
+                        <div><input type="checkbox" id="c-green-4"><label for="c-green-4">Green</label></div>
+                        <div><input type="checkbox" id="c-blue-4"><label for="c-blue-4">Blue</label></div>
+                        <div><input type="checkbox" id="c-yellow-4"><label for="c-yellow-4">Yellow</label></div>
+                        <div><input type="checkbox" id="c-purple-4"><label for="c-purple-4">Purple</label></div>
+                        <div><input type="checkbox" id="c-black-4"><label for="c-black-4">Black</label></div>
+                        <div><input type="checkbox" id="c-white-4"><label for="c-white-4">White</label></div>
+                    </div>
+                </div>
+                <div class="filter-group"><h4>Price Range</h4><div><label for="min-p-4">Min:</label><input type="number" id="min-p-4" style="width: 70px;"></div><div><label for="max-p-4">Max:</label><input type="number" id="max-p-4" style="width: 70px;"></div></div>
+                <div class="filter-group"><h4>Rating</h4><div><label for="min-r-4">Min:</label><input type="number" id="min-r-4" min="1" max="5" style="width: 70px;"></div></div>
+                <div class="filter-group"><h4>Another Group</h4><div><label for="text-1">Text:</label><input type="text" id="text-1"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Original JavaScript from filter_element.html
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all expandable headers within the entire test page
+            const expandableHeaders = document.querySelectorAll('.expandable-header');
+
+            expandableHeaders.forEach(header => {
+                header.addEventListener('click', function () {
+                    this.classList.toggle('expanded');
+                    const content = this.nextElementSibling;
+                    if (content.style.display === 'none' || content.style.display === '') {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
