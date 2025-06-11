@@ -1,1 +1,9 @@
 Hello
+
+## Website Ideas based on Physical Store Types
+
+- **Restaurant & Food Trivia:** Questions about different cuisines ("chinese," "indian," "mexican"), famous dishes from "pizza" places or "diners," history of "fast food" chains.
+- **Retail History Trivia:** Trivia about iconic "department stores," origins of common "apparel" brands, or historical "automobiles."
+- **"Guess the Store/Product" Game:** Image-based trivia where users guess the store type (e.g., a "cafe" interior, a "hobby store" shelf) or a specific product found in "electronics" stores or "groceries."
+- **Home Improvement & DIY Trivia:** Questions about tools found in "home improvement" stores, materials, or famous architectural styles.
+- **Brand Slogan & Jingle Trivia:** Trivia focusing on well-known slogans or jingles from various physical store types or brands sold within them.
